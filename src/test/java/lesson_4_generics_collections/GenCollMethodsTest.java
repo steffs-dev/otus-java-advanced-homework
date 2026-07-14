@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,20 @@ class GenCollMethodsTest {
                 () -> GenCollMethods.swapArray(array, 0, 5));
     }
 
+    @Test
+    void swapArray_ArrayNull() {
+        String[] array = null;
+        GenCollMethods.swapArray(array, 1, 1);
+        assertNull(array);
+    }
+
+    @Test
+    void swapArray_ElementNull() {
+        Integer[] array = {1, 2, null, 4};
+        GenCollMethods.swapArray(array, 1, 2);
+        assertArrayEquals(new Integer[]{1, null, 2, 4}, array);
+    }
+
     //--------------------------------------------
 
     @Test
@@ -55,6 +70,19 @@ class GenCollMethodsTest {
         List<String> list = GenCollMethods.convertArrayToList(array);
         assertTrue(list.isEmpty());
         assertInstanceOf(ArrayList.class, list);
+    }
+
+    @Test
+    void convertArrayToList_ArrayNull() {
+        List<String> list = GenCollMethods.convertArrayToList(null);
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    void convertArrayToList_ElementNull() {
+        Integer[] array = {10, null, 30};
+        List<Integer> list = GenCollMethods.convertArrayToList(array);
+        assertEquals(new ArrayList<>(Arrays.asList(10, null, 30)), list);
     }
 
     @Test
@@ -101,5 +129,20 @@ class GenCollMethodsTest {
         String[] words = {};
         Map<String, Long> result = GenCollMethods.findDistinctValues(words);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void findDistinctValues_ArrayNull() {
+        Map<String, Long> result = GenCollMethods.findDistinctValues(null);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void findDistinctValues_ElementNull() {
+        String[] words = {"test", null, "test"};
+        Map<String, Long> result = GenCollMethods.findDistinctValues(words);
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(null));
+        assertEquals(2L, result.get("test"));
     }
 }
