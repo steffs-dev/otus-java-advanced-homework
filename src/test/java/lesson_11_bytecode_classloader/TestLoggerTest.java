@@ -20,6 +20,7 @@ class TestLoggerTest {
         outContent.reset();
         System.setOut(new PrintStream(outContent));
     }
+
     @AfterEach
     void tearDown() {
         System.setOut(originalOut);

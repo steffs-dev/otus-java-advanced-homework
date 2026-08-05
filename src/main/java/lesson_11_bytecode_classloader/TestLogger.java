@@ -21,20 +21,24 @@ public class TestLogger {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (isLoggable(method)) {
-                method.setAccessible(true);
                 StringBuilder sb = new StringBuilder("executed method: " + method.getName());
                 for (Object param : args) {
-                    sb.append(", param: ").append(param.toString());
+                    sb.append(", param: ").append(param);
                 }
                 System.out.println(sb);
-                return method.invoke(logger, args);
             }
 
             return method.invoke(logger, args);
         }
 
         private boolean isLoggable(Method method) {
-            return method.isAnnotationPresent(Log.class);
+            try {
+                Method realMethod = logger.getClass()
+                        .getDeclaredMethod(method.getName(), method.getParameterTypes());
+                return realMethod.isAnnotationPresent(Log.class);
+            } catch (NoSuchMethodException e) {
+                return false;
+            }
         }
     }
 }
