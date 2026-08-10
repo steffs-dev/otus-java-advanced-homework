@@ -3,5 +3,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/
+.kotlin
 .idea/
-/target/
+target/
+*.iws
+*.iml
+*.ipr
+out/
