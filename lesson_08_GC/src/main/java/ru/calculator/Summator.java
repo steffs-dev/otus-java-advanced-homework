@@ -3,53 +3,67 @@ package ru.calculator;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Summator {
-    private Integer sum = 0;
-    private Integer prevValue = 0;
-    private Integer prevPrevValue = 0;
-    private Integer sumLastThreeValues = 0;
-    private Integer someValue = 0;
+    private int sum = 0;
+    private int prevValue = 0;
+    private int prevPrevValue = 0;
+    private int sumLastThreeValues = 0;
+    private int someValue = 0;
     // !!! эта коллекция должна остаться. Заменять ее на счетчик нельзя.
-    private final List<Data> listValues = new ArrayList<>();
-    private final SecureRandom random = new SecureRandom();
+    private final List<Data> listValues = new ArrayList<>(100_000);
+    private final Random random = new Random();
+    private int listCounter = 0;
 
     // !!! сигнатуру метода менять нельзя
     public void calc(Data data) {
         listValues.add(data);
-        if (listValues.size() % 100_000 == 0) {
+        listCounter++;
+        if(listCounter == 100_000){
             listValues.clear();
+            listCounter = 0;
         }
-        sum += data.getValue() + random.nextInt();
 
-        sumLastThreeValues = data.getValue() + prevValue + prevPrevValue;
+        int value = data.getValue();
+        sum += value + random.nextInt();
+
+        sumLastThreeValues = value + prevValue + prevPrevValue;
 
         prevPrevValue = prevValue;
-        prevValue = data.getValue();
+        prevValue = value;
+        int intermValue = (sumLastThreeValues * sumLastThreeValues / (value + 1) - sum);
+        int listSize = listValues.size();
 
-        for (var idx = 0; idx < 3; idx++) {
-            someValue += (sumLastThreeValues * sumLastThreeValues / (data.getValue() + 1) - sum);
-            someValue = Math.abs(someValue) + listValues.size();
-        }
+        int some = someValue;
+        some +=intermValue;
+        some = Math.abs(some) + listSize;
+
+        some +=intermValue;
+        some = Math.abs(some) + listSize;
+
+        some +=intermValue;
+        some = Math.abs(some) + listSize;
+        someValue = some;
     }
 
-    public Integer getSum() {
+    public int getSum() {
         return sum;
     }
 
-    public Integer getPrevValue() {
+    public int getPrevValue() {
         return prevValue;
     }
 
-    public Integer getPrevPrevValue() {
+    public int getPrevPrevValue() {
         return prevPrevValue;
     }
 
-    public Integer getSumLastThreeValues() {
+    public int getSumLastThreeValues() {
         return sumLastThreeValues;
     }
 
-    public Integer getSomeValue() {
+    public int getSomeValue() {
         return someValue;
     }
 }
