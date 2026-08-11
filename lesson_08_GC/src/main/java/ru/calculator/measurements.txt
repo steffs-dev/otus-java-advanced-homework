@@ -1,0 +1,9 @@
+Размер хипа, | Результат до изменений	   | Результат после изменений          | Результат после изменений
+Mб           |                             | без замены SecureRandom на Random	| + SecureRandom заменен на Random
+_____________|_____________________________|____________________________________|__________________________________
+512	         | spend msec:145777, sec:145  |	spend msec:112554, sec:112		| spend msec:5112, sec:5
+768	         | spend msec:147552, sec:147  |	spend msec:117090, sec:117		| spend msec:5231, sec:5
+1024	     | spend msec:145637, sec:145  |	spend msec:117707, sec:117		| spend msec:5110, sec:5
+2048	     | spend msec:138122, sec:138  |	spend msec:115605, sec:115		| spend msec:4963, sec:4
+3000	     | spend msec:147848, sec:147  |	spend msec:115320, sec:115		| spend msec:5149, sec:5
+4096	     | spend msec:146699, sec:146  |	spend msec:116681, sec:116		| spend msec:5899, sec:5
