@@ -4,6 +4,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/
 .kotlin
+target/
+logs/
+
+### IntelliJ IDEA ###
 .idea/
 target/
 *.iws
