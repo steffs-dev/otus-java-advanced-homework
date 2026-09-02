@@ -1,0 +1,35 @@
+<Configuration xmlns="http://logging.apache.org/log4j/2.0/config">
+    <Properties>
+        <Property name="basePath">logs</Property>
+    </Properties>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5p %d{yyyy-MM-dd HH:mm:ss} [%t] %C (%F:%L) - %m%n"/>
+        </Console>
+
+        <RollingFile name="ROLLING_FILE"
+                     fileName="${basePath}/log.log"
+                     filePattern="${basePath}/log-%d{yyyy-MM-dd}-%i.log.gz"
+                     append="true">
+            <PatternLayout pattern="%-5p %d{yyyy-MM-dd HH:mm:ss} [%t] %C (%F:%L) - %m%n"/>
+            <!-- Политика запуска ротации: по достижении 10 МБ -->
+            <SizeBasedTriggeringPolicy size="10 MB"/>
+            <!-- Стратегия ротации: хранить не более 10 архивов -->
+            <DefaultRolloverStrategy max="10">
+                <!-- Удалять файлы старше 7 дней (дополнительно) -->
+                <Delete basePath="${basePath}" maxDepth="1">
+                    <IfFileName glob="*.log.gz" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!--  ALL < Trace < Debug < Info < Warn < Error < Fatal < OFF  -->
+        <Root level="Info">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="ROLLING_FILE"/>
+        </Root>
+        <Logger name="ru.otus.java.basic.project" level="info"/>
+    </Loggers>
+</Configuration>
