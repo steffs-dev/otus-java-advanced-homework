@@ -1,0 +1,39 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<configuration>-->
+<!--    &lt;!&ndash; Переменная для пути к папке с логами &ndash;&gt;-->
+<!--    <property name="LOG_DIR" value="/log"/>-->
+<!--    <property name="APP_NAME" value="MyApp"/>-->
+
+<!--    &lt;!&ndash; 1. Аппендер для вывода в консоль &ndash;&gt;-->
+<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            &lt;!&ndash; Формат: Дата [Поток] Уровень ИмяКласса - Сообщение &ndash;&gt;-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+<!--    &lt;!&ndash; 2. Аппендер для записи в файл (с ротацией по размеру и времени) &ndash;&gt;-->
+<!--    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${LOG_DIR}/${APP_NAME}.log</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; Имя файла при ротации (каждый день + индекс, если размер превышен) &ndash;&gt;-->
+<!--            <fileNamePattern>${LOG_DIR}/${APP_NAME}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>30</maxHistory> &lt;!&ndash; Хранить логи 30 дней &ndash;&gt;-->
+<!--            <totalSizeCap>1GB</totalSizeCap>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+<!--    &lt;!&ndash; Настройка уровней логирования для конкретных пакетов &ndash;&gt;-->
+<!--    <logger name="src.main.java" level="DEBUG"/>-->
+<!--    <logger name="org.hibernate" level="WARN"/> &lt;!&ndash; Скрываем лишние логи БД &ndash;&gt;-->
+
+<!--    &lt;!&ndash; Корневой логгер &ndash;&gt;-->
+<!--    <root level="INFO">-->
+<!--        <appender-ref ref="CONSOLE"/>-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--    </root>-->
+<!--</configuration>-->
