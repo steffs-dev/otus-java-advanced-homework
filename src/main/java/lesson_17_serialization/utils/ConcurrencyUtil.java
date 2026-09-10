@@ -1,7 +1,8 @@
 package lesson_17_serialization.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +23,7 @@ public class ConcurrencyUtil {
      * Логгер для фиксации событий, связанных с остановкой и прерыванием задач в пулах потоков.
      */
 
-    private static final Logger log = LogManager.getLogger(ConcurrencyUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ConcurrencyUtil.class);
 
     /**
      * Выполняет безопасное завершение работы одного или нескольких {@link ExecutorService}.

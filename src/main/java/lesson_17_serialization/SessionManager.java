@@ -8,8 +8,8 @@ import lesson_17_serialization.services.FilesService;
 import lesson_17_serialization.ui.UI;
 import lesson_17_serialization.utils.ConcurrencyUtil;
 import lesson_17_serialization.utils.JsonUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -86,7 +86,7 @@ public class SessionManager {
      * Логгер приложения.
      */
 
-    private static final Logger log = LogManager.getLogger(SessionManager.class);
+    private static final Logger log = LoggerFactory.getLogger(SessionManager.class);
 
     /**
      * Задержка, которая позволяет методу {@link #execute()} ждать завершения сессии.
