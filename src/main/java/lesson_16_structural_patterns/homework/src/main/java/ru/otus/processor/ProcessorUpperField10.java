@@ -1,0 +1,12 @@
+package lesson_16_structural_patterns.homework.src.main.java.ru.otus.processor;
+
+
+import lesson_16_structural_patterns.homework.src.main.java.ru.otus.model.Message;
+
+public class ProcessorUpperField10 implements Processor {
+
+    @Override
+    public Message process(Message message) {
+        return message.toBuilder().field4(message.getField10().toUpperCase()).build();
+    }
+}
