@@ -1,4 +1,4 @@
-package lesson_16_structural_patterns.homework.src.test.java.ru.otus.handler;
+package lesson_16_structural_patterns.homework.src.main.java.ru.otus.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -14,7 +14,6 @@ import java.util.List;
 import lesson_16_structural_patterns.homework.src.main.java.ru.otus.handler.ComplexProcessor;
 import lesson_16_structural_patterns.homework.src.main.java.ru.otus.listener.Listener;
 import lesson_16_structural_patterns.homework.src.main.java.ru.otus.model.Message;
-import lesson_16_structural_patterns.homework.src.main.java.ru.otus.processor.Processor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
