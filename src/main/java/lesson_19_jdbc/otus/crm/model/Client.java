@@ -7,7 +7,8 @@ public class Client {
     private Long id;
     private String name;
 
-    public Client() {}
+    public Client() {
+    }
 
     public Client(String name) {
         this.id = null;

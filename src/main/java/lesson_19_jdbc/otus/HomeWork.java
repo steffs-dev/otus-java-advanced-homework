@@ -24,6 +24,9 @@ public class HomeWork {
     private static final Logger log = LoggerFactory.getLogger(HomeWork.class);
 
     public static void main(String[] args) {
+
+        log.info("resource = {}", HomeWork.class.getClassLoader().getResource("db/migration"));
+
         // Общая часть
         var dataSource = new DriverManagerDataSource(URL, USER, PASSWORD);
         flywayMigrations(dataSource);
@@ -31,9 +34,9 @@ public class HomeWork {
         var dbExecutor = new DbExecutorImpl();
 
         // Работа с клиентом
-        EntityClassMetaData<Client> entityClassMetaDataClient; // = new EntityClassMetaDataImpl();
-        EntitySQLMetaData entitySQLMetaDataClient = null; // = new EntitySQLMetaDataImpl(entityClassMetaDataClient);
-        var dataTemplateClient = new DataTemplateJdbc<Client>(
+        EntityClassMetaData<Client> entityClassMetaDataClient = new EntityClassMetaDataImpl<Client>(){};
+        EntitySQLMetaData<Client> entitySQLMetaDataClient = new EntitySQLMetaDataImpl<>(entityClassMetaDataClient);
+        var dataTemplateClient = new DataTemplateJdbc<>(
                 dbExecutor, entitySQLMetaDataClient); // реализация DataTemplate, универсальная
 
         // Код дальше должен остаться
@@ -48,14 +51,17 @@ public class HomeWork {
 
         // Сделайте тоже самое с классом Manager (для него надо сделать свою таблицу)
 
-        EntityClassMetaData<Manager> entityClassMetaDataManager; // = new EntityClassMetaDataImpl();
-        EntitySQLMetaData entitySQLMetaDataManager = null; // = new EntitySQLMetaDataImpl(entityClassMetaDataManager);
+        EntityClassMetaData<Manager> entityClassMetaDataManager = new EntityClassMetaDataImpl<Manager>(){};
+        EntitySQLMetaData<Manager> entitySQLMetaDataManager = new EntitySQLMetaDataImpl<>(entityClassMetaDataManager);
         var dataTemplateManager = new DataTemplateJdbc<Manager>(dbExecutor, entitySQLMetaDataManager);
 
         var dbServiceManager = new DbServiceManagerImpl(transactionRunner, dataTemplateManager);
         dbServiceManager.saveManager(new Manager("ManagerFirst"));
 
         var managerSecond = dbServiceManager.saveManager(new Manager("ManagerSecond"));
+        managerSecond.setParam1("someParam1");
+        System.out.println("managerSecond = " + managerSecond);
+        dbServiceManager.saveManager(managerSecond);
         var managerSecondSelected = dbServiceManager
                 .getManager(managerSecond.getNo())
                 .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
@@ -64,11 +70,11 @@ public class HomeWork {
 
     private static void flywayMigrations(DataSource dataSource) {
         log.info("db migration started...");
-        var flyway = Flyway.configure()
+        Flyway.configure()
                 .dataSource(dataSource)
-                .locations("classpath:/db/migration")
-                .load();
-        flyway.migrate();
+                .locations("filesystem:C:/Users/Konstantin/IdeaProjects/otus_advanced/src/main/resources/db/migration")
+                .loggers("slf4j")
+                .load().migrate();
         log.info("db migration finished.");
         log.info("***");
     }

@@ -8,15 +8,20 @@ public class Manager {
     private String label;
     private String param1;
 
-    public Manager() {}
+    public Manager() {
+    }
 
     public Manager(String label) {
         this.label = label;
     }
 
-    public Manager(Long no, String label, String param1) {
+    public Manager(Long no, String label) {
+        this(label);
         this.no = no;
-        this.label = label;
+    }
+
+    public Manager(Long no, String label, String param1) {
+        this(no, label);
         this.param1 = param1;
     }
 
@@ -46,6 +51,6 @@ public class Manager {
 
     @Override
     public String toString() {
-        return "Manager{" + "no=" + no + ", label='" + label + '\'' + '}';
+        return "Manager{" + "no=" + no + ", label='" + label + '\'' + ", param1='" + param1 + '\'' + '}';
     }
 }

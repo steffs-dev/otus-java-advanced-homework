@@ -4,8 +4,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.List;
 
-/** "Разбирает" объект на составные части */
+/**
+ * "Разбирает" объект на составные части
+ */
 public interface EntityClassMetaData<T> {
+    Class<T> getEntityClass();
+
     String getName();
 
     Constructor<T> getConstructor();
