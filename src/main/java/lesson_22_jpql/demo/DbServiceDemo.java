@@ -1,6 +1,8 @@
 package lesson_22_jpql.demo;
 
 import lesson_22_jpql.core.sessionmanager.TransactionManagerHibernate;
+import lesson_22_jpql.crm.model.Address;
+import lesson_22_jpql.crm.model.Phone;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,8 @@ import lesson_22_jpql.core.repository.HibernateUtils;
 import lesson_22_jpql.crm.dbmigrations.MigrationsExecutorFlyway;
 import lesson_22_jpql.crm.model.Client;
 import lesson_22_jpql.crm.service.DbServiceClientImpl;
+
+import java.util.List;
 
 public class DbServiceDemo {
 
@@ -25,14 +29,16 @@ public class DbServiceDemo {
 
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 
-        var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class);
+        var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class, Address.class, Phone.class);
 
         var transactionManager = new TransactionManagerHibernate(sessionFactory);
         ///
         var clientTemplate = new DataTemplateHibernate<>(Client.class);
         ///
         var dbServiceClient = new DbServiceClientImpl(transactionManager, clientTemplate);
-        dbServiceClient.saveClient(new Client("dbServiceFirst"));
+        dbServiceClient.saveClient(new Client(null, "dbServiceFirst", new Address(
+                null, "AnyStreet"), List.of(new Phone(null, "13-555-22"),
+                new Phone(null, "14-666-333"))));
 
         var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
         var clientSecondSelected = dbServiceClient

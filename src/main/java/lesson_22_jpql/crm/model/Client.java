@@ -1,20 +1,16 @@
 package lesson_22_jpql.crm.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "client")
 public class Client implements Cloneable {
@@ -25,31 +21,34 @@ public class Client implements Cloneable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "client_name")
     private String name;
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "client_id")
+    private List<Phone> phones;
 
     public Client(String name) {
         this.id = null;
         this.name = name;
+        this.address = null;
+        this.phones = new ArrayList<>();
     }
 
     public Client(Long id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public Client(Long id, String name, Address address, List<Phone> phones) {
-        throw new UnsupportedOperationException();
+        this.address = null;
+        this.phones = null;
     }
 
     @Override
     @SuppressWarnings({"java:S2975", "java:S1182"})
     public Client clone() {
-        return new Client(this.id, this.name);
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" + "id=" + id + ", name='" + name + '\'' + '}';
+        return new Client(this.id, this.name, this.address, this.phones);
     }
 }
