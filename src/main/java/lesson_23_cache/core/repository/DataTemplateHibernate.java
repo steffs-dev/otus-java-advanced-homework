@@ -3,7 +3,6 @@ package lesson_23_cache.core.repository;
 import java.util.List;
 import java.util.Optional;
 
-import lesson_22_jpql.core.repository.DataTemplate;
 import org.hibernate.Session;
 
 public class DataTemplateHibernate<T> implements DataTemplate<T> {

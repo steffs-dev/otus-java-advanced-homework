@@ -23,10 +23,24 @@ public class HWCacheDemo {
         };
 
         cache.addListener(listener);
-        cache.put("1", 1);
+        String key = "key: 0";
+        cache.put("key: 0".intern(), 555);
+        for (int i = 1; i < 50; i++) {
+            cache.put("key: " + i, i);
+        }
+        logger.info("before gc: {}", cache.getAll().size());
 
-        logger.info("getValue:{}", cache.get("1"));
-        cache.remove("1");
+        System.gc();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        logger.info("after gc: {}", cache.getAll().size());
+
+        logger.info("getValue:{}", cache.get("key: 0"));
+
+//        cache.remove("key: 1");
         cache.removeListener(listener);
     }
 }

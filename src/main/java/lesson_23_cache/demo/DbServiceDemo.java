@@ -1,16 +1,17 @@
 package lesson_23_cache.demo;
 
-import lesson_22_jpql.core.sessionmanager.TransactionManagerHibernate;
-import lesson_22_jpql.crm.model.Address;
-import lesson_22_jpql.crm.model.Phone;
+import lesson_23_cache.cachehw.HwListener;
+import lesson_23_cache.core.sessionmanager.TransactionManagerHibernate;
+import lesson_23_cache.crm.model.Address;
+import lesson_23_cache.crm.model.Phone;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import lesson_22_jpql.core.repository.DataTemplateHibernate;
-import lesson_22_jpql.core.repository.HibernateUtils;
-import lesson_22_jpql.crm.dbmigrations.MigrationsExecutorFlyway;
-import lesson_22_jpql.crm.model.Client;
-import lesson_22_jpql.crm.service.DbServiceClientImpl;
+import lesson_23_cache.core.repository.DataTemplateHibernate;
+import lesson_23_cache.core.repository.HibernateUtils;
+import lesson_23_cache.crm.dbmigrations.MigrationsExecutorFlyway;
+import lesson_23_cache.crm.model.Client;
+import lesson_23_cache.crm.service.DbServiceClientImpl;
 
 import java.util.List;
 
@@ -35,7 +36,12 @@ public class DbServiceDemo {
         ///
         var clientTemplate = new DataTemplateHibernate<>(Client.class);
         ///
-        var dbServiceClient = new DbServiceClientImpl(transactionManager, clientTemplate);
+
+        HwListener<Long, Client> listener = (k, v, action) -> {
+            log.info(String.format("Client Id: %d, credentials: %s, action: %s", k, v, action));
+        };
+
+        var dbServiceClient = new DbServiceClientImpl(transactionManager, clientTemplate, listener);
         dbServiceClient.saveClient(new Client(null, "dbServiceFirst", new Address(
                 null, "AnyStreet"), List.of(new Phone(null, "13-555-22"),
                 new Phone(null, "14-666-333"))));

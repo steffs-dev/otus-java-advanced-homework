@@ -1,8 +1,6 @@
 package lesson_23_cache.crm.model;
 
 import jakarta.persistence.*;
-import lesson_22_jpql.crm.model.Address;
-import lesson_22_jpql.crm.model.Phone;
 import lombok.*;
 
 import java.util.ArrayList;

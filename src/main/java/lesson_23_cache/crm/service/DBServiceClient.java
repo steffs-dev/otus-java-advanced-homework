@@ -1,6 +1,6 @@
 package lesson_23_cache.crm.service;
 
-import lesson_22_jpql.crm.model.Client;
+import lesson_23_cache.crm.model.Client;
 
 import java.util.List;
 import java.util.Optional;

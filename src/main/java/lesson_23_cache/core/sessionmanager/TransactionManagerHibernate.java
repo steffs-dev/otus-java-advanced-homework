@@ -2,9 +2,6 @@ package lesson_23_cache.core.sessionmanager;
 
 import java.util.concurrent.Callable;
 
-import lesson_22_jpql.core.sessionmanager.DataBaseOperationException;
-import lesson_22_jpql.core.sessionmanager.TransactionAction;
-import lesson_22_jpql.core.sessionmanager.TransactionManager;
 import org.hibernate.SessionFactory;
 
 public class TransactionManagerHibernate implements TransactionManager {
@@ -15,12 +12,12 @@ public class TransactionManagerHibernate implements TransactionManager {
     }
 
     @Override
-    public <T> T doInTransaction(lesson_22_jpql.core.sessionmanager.TransactionAction<T> action) {
+    public <T> T doInTransaction(TransactionAction<T> action) {
         return doInTransaction(action, false);
     }
 
     @Override
-    public <T> T doInReadOnlyTransaction(lesson_22_jpql.core.sessionmanager.TransactionAction<T> action) {
+    public <T> T doInReadOnlyTransaction(TransactionAction<T> action) {
         return doInTransaction(action, true);
     }
 
