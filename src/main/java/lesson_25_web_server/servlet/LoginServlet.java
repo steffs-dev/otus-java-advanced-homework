@@ -42,7 +42,12 @@ public class LoginServlet extends HttpServlet {
                 .build();
 
         if (userAuthService.authenticate(credentialsDtoReq)) {
-            HttpSession session = request.getSession();
+            HttpSession session = request.getSession(false);
+            if (session == null) {
+                session = request.getSession(true);
+            }else {
+                request.changeSessionId();
+            }
             session.setAttribute(Constants.get("session.attribute"), Boolean.TRUE);
             session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
             response.sendRedirect(Constants.get("page.admin"));

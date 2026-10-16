@@ -17,8 +17,6 @@ import java.util.Optional;
 @SuppressWarnings({"java:S1989"})
 public class UsersApiServlet extends HttpServlet {
 
-    private static final int ID_PATH_PARAM_POSITION = 1;
-
     private final transient DBServiceClient dbServiceClient;
 
     public UsersApiServlet(DBServiceClient dbServiceClient) {
@@ -28,17 +26,16 @@ public class UsersApiServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/")) {
+        if (isPlainPath(pathInfo)) {
             List<ClientDtoResp> respList = dbServiceClient.findAll().stream()
                     .map(ClientDtoResp.createFromClient())
                     .toList();
-            response.setContentType(Constants.get("json"));
-            response.getWriter().print(JsonUtil.getMAPPER().writeValueAsString(respList));
+            createJson(response, HttpServletResponse.SC_OK, respList);
             return;
         }
 
         long id = extractIdFromRequest(request);
-        if (id < 0) {
+        if (id <= 0) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid id");
             return;
         }
@@ -50,20 +47,32 @@ public class UsersApiServlet extends HttpServlet {
             return;
         }
         ClientDtoResp dtoResp = ClientDtoResp.createFromClient().apply(clientOptional.get());
-        response.setContentType(Constants.get("json"));
-        response.getWriter().print(JsonUtil.getMAPPER().writeValueAsString(dtoResp));
+        createJson(response, HttpServletResponse.SC_OK, dtoResp);
     }
 
     private long extractIdFromRequest(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
-        if (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/")) {
+        if (isPlainPath(pathInfo)) {
             return -1;
         }
+
+        if (pathInfo.charAt(0) != '/') {
+            return -1;
+        }
+
+        String raw = pathInfo.substring(1);
+        if (raw.isEmpty() || raw.indexOf('/') >= 0) {
+            return -1;
+        }
+        for (int i = 0; i < raw.length(); i++) {
+            char c = raw.charAt(i);
+            if (c < '0' || c > '9') {
+                return -1;
+            }
+        }
         try {
-            String[] path = pathInfo.split("/");
-            String id = (path.length > ID_PATH_PARAM_POSITION) ?
-                    path[ID_PATH_PARAM_POSITION] : String.valueOf(-1);
-            return Long.parseLong(id);
+            long id = Long.parseLong(raw);
+            return (id > 0) ? id : -1;
         } catch (NumberFormatException e) {
             return -1;
         }
@@ -71,6 +80,13 @@ public class UsersApiServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String pathInfo = request.getPathInfo();
+        if (!isPlainPath(pathInfo)) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED,
+                    "POST allowed only on /api/client");
+            return;
+        }
+
         ClientDtoReq dtoReq;
         try {
             dtoReq = JsonUtil.getMAPPER().readValue(request.getReader(), ClientDtoReq.class);
@@ -79,7 +95,8 @@ public class UsersApiServlet extends HttpServlet {
             return;
         }
 
-        if (dtoReq.firstName() == null || dtoReq.login() == null || dtoReq.password() == null) {
+        if (isMissingField(dtoReq.firstName()) || isMissingField(dtoReq.login()) ||
+                isMissingField(dtoReq.password())) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing fields");
             return;
         }
@@ -87,9 +104,21 @@ public class UsersApiServlet extends HttpServlet {
         Client client = dbServiceClient.saveClient(
                 new Client(dtoReq.firstName(), dtoReq.login(), dtoReq.password()));
 
-        response.setStatus(HttpServletResponse.SC_CREATED);
+        createJson(response, HttpServletResponse.SC_CREATED,
+                ClientDtoResp.createFromClient().apply(client));
+    }
+
+    private boolean isPlainPath(String pathInfo){
+        return (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/"));
+    }
+
+    private boolean isMissingField(String field){
+        return field == null || field.isBlank();
+    }
+
+    private void createJson(HttpServletResponse response, int status, Object data) throws IOException {
         response.setContentType(Constants.get("json"));
-        response.getWriter().println(JsonUtil.getMAPPER().writeValueAsString(
-                ClientDtoResp.createFromClient().apply(client)));
+        response.setStatus(status);
+        response.getWriter().print(JsonUtil.getMAPPER().writeValueAsString(data));
     }
 }
