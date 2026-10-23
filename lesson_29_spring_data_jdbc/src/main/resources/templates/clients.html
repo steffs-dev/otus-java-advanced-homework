@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Админка — клиенты</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #fafafa;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0069d9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .error {
+            color: #c00;
+        }
+
+        .success {
+            color: #080;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <h1>Управление клиентами</h1>
+    <a href="/logout">Выйти</a>
+</div>
+
+<div class="panel">
+    <h3>Создать клиента</h3>
+    <form id="createForm">
+        <div class="row">
+            <input type="text" id="newName" placeholder="Имя" required>
+            <input type="text" id="newLogin" placeholder="Логин" required>
+            <input type="password" id="newPassword" placeholder="Пароль" required>
+            <button type="submit">Создать</button>
+        </div>
+        <div id="createMsg"></div>
+    </form>
+</div>
+
+<div class="panel">
+    <h3>Найти по id</h3>
+    <div class="row">
+        <input type="text" id="userId" placeholder="id">
+        <button onclick="getById()">Получить</button>
+    </div>
+    <pre id="oneResult"></pre>
+</div>
+
+<div class="panel">
+    <h3>Все клиенты</h3>
+    <button onclick="loadAll()">Обновить</button>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Имя</th>
+            <th>Логин</th>
+        </tr>
+        </thead>
+        <tbody id="allTable"></tbody>
+    </table>
+    <div id="allMsg"></div>
+</div>
+
+<script>
+    const API = '/api/client';
+
+    function getById() {
+        const id = document.getElementById('userId').value.trim();
+        const box = document.getElementById('oneResult');
+        if (!id) {
+            box.textContent = 'Введите id';
+            return;
+        }
+        fetch(`${API}/${id}`)
+            .then(r => r.ok ? r.json() : Promise.reject('HTTP ' + r.status))
+            .then(c => box.textContent = JSON.stringify(c, null, 2))
+            .catch(e => box.textContent = 'Ошибка: ' + e);
+    }
+
+    function loadAll() {
+        const tbody = document.getElementById('allTable');
+        const msg = document.getElementById('allMsg');
+        tbody.innerHTML = '';
+        msg.textContent = '';
+        fetch(API)
+            .then(r => r.ok ? r.json() : Promise.reject('HTTP ' + r.status))
+            .then(list => {
+                if (!list.length) {
+                    tbody.innerHTML = '<tr><td colspan="3">Нет клиентов</td></tr>';
+                    return;
+                }
+                list.forEach(c => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${c.id}</td><td>${c.name}</td><td>${c.login}</td>`;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(e => msg.textContent = 'Ошибка: ' + e);
+    }
+
+    document.getElementById('createForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const msg = document.getElementById('createMsg');
+        msg.textContent = '';
+        const payload = {
+            firstName: document.getElementById('newName').value.trim(),
+            login: document.getElementById('newLogin').value.trim(),
+            password: document.getElementById('newPassword').value
+        };
+        fetch(API, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        })
+            .then(r => r.ok ? r.json() : Promise.reject('HTTP ' + r.status))
+            .then(c => {
+                msg.className = 'success';
+                msg.textContent = 'Создан клиент id=' + c.id;
+                e.target.reset();
+                loadAll();
+            })
+            .catch(err => {
+                msg.className = 'error';
+                msg.textContent = 'Ошибка: ' + err;
+            });
+    });
+
+    loadAll();
+</script>
+</body>
+</html>
